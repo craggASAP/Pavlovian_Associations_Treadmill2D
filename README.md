@@ -13,7 +13,7 @@ Scripts for reading velocity from 2D treadmill ball using Raspberry Pi. Adapted 
 ### mouse_relay_voltage_hwGpio.py
 - reads in mouse activity and sends out voltage using the hardware PWM pins (only 2 pins available: GPIO 18 and GPIO 19)
 
-### mouse_relay_voltage_swGpio.py
+### mouse_relay_voltage_swGpio.py (CURRENTLY UNTESTED AND PROBABLY DOESN'T WORK)
 - reads in mouse activity and sends out voltage using the software PWM pins (can be any GPIO, here GPIO 5, GPIO 6, GPIO 22, and GPIO 27)
   
 

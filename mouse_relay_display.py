@@ -41,9 +41,9 @@ try:
 				data_lock.acquire()
 				s = self.sensor['Name']
 				dx = self.sensor['dx']
-				self.sensor['dx'] = 0
+#				self.sensor['dx'] = 0
 				dy = self.sensor['dy']
-				self.sensor['dy'] = 0
+#				self.sensor['dy'] = 0
 				data_lock.release()			
 				serial_lock.acquire()
 				serial_lock.release()

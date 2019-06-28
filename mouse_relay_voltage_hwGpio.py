@@ -10,15 +10,15 @@ pi = pigpio.pi()
 
 try:
 	# distance calibration factor: 
-	# let's say it's like 2500 pixels/m 
+	# 1 ball rotation is about 1000 mouse units
+	# for now let's say that's 1/2 m
 	# sampling rate is 100Hz (every 10ms)
-	# let's make 100% = 1.25 m/s
+	# let's make 100% = 1.5 m/s
 	# so convert to m/s and then percentage of 1.25 m/s
-	pix_m = 2500
-	sr = 100
-	maxv = 1.25
-	distCalib = 1/pix_m*sr/1.25
+	pix_m = 2000
+	maxv = 1.5
 	
+
 	# Dictionaries/structures containing data for each 'SENSOR'
 	mouse1 = {
 		'Name': '1',
@@ -32,8 +32,10 @@ try:
 	data_lock = Lock()
 	gpio_lock = Lock()
 
-	transmit_delay = .001 #.01
+	transmit_delay = .01 #.01
 	read_delay = .001 #0.001
+	
+	distCalib = 1/pix_m/transmit_delay/maxv
 	print('mouse_relay.py: \n\tMain thread initialized\n\tDefining I/O threads\n')
 
 
@@ -49,14 +51,14 @@ try:
 				# acquire and reset dx/dy data
 				data_lock.acquire()
 				dx = self.sensor['dx']
-#				self.sensor['dx'] = 0
+				self.sensor['dx'] = 0
 				dy = self.sensor['dy']
-#				self.sensor['dy'] = 0
+				self.sensor['dy'] = 0
 				data_lock.release()								
 				# convert to a percentage and write out to pins as % duty cycle
 				pinx = self.sensor['pinx']
 				piny = self.sensor['piny']							
-				gpio_lock.acquire()			
+				gpio_lock.acquire()		
 				pi.hardware_PWM(pinx,800,1e6*dx*distCalib)
 				pi.hardware_PWM(piny,800,1e6*dy*distCalib)																																																									
 				gpio_lock.release()			
@@ -87,8 +89,8 @@ try:
 					self.sensor['dy'] += to_signed(newdy)
 					data_lock.release()
 				time.sleep(read_delay)
-				print('dx' + str(self.sensor['dx']))
-				print('dy' + str(self.sensor['dy']))
+#				print('dx' + str(self.sensor['dx']))
+#				print('dy' + str(self.sensor['dy']))
 	print('\tI/O threads defined\n\t...initializing now\n')
 			
 	# Begin a transmitting thread for each mouse: SEND_OUTPUT

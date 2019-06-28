@@ -15,6 +15,10 @@ try:
 	# sampling rate is 100Hz (every 10ms)
 	# let's make 100% = 1.5 m/s
 	# so convert to m/s and then percentage of 1.25 m/s
+
+	# can't send negative voltages, so let's have a pin 
+	# sends 1 if it's negative, 0 otherwise
+
 	pix_m = 2000
 	maxv = 1.5
 	
@@ -26,7 +30,9 @@ try:
 		'dx': 0,
 		'dy': 0,
 		'pinx': 18,
-		'piny': 19}	
+		'xsign': 5,
+		'piny': 19,
+		'ysign': 6}	
 	# Declare variables
 	transmit_timer = None
 	data_lock = Lock()
@@ -50,17 +56,27 @@ try:
 			while True:
 				# acquire and reset dx/dy data
 				data_lock.acquire()
-				dx = self.sensor['dx']
+				dx = self.sensor['dx']				
 				self.sensor['dx'] = 0
 				dy = self.sensor['dy']
 				self.sensor['dy'] = 0
 				data_lock.release()								
 				# convert to a percentage and write out to pins as % duty cycle
 				pinx = self.sensor['pinx']
-				piny = self.sensor['piny']							
+				signx = self.sensor['signx']
+				piny = self.sensor['piny']
+				signy = self.sensor['signy']							
 				gpio_lock.acquire()		
-				pi.hardware_PWM(pinx,800,1e6*dx*distCalib)
-				pi.hardware_PWM(piny,800,1e6*dy*distCalib)																																																									
+				pi.hardware_PWM(pinx,800,1e6*min([abs(dx)*distCalib,1])) # make it 1 if it's over 1
+				if dx<0: # if it's negative, send this pin
+					pi.hardware_PWM(pinx,800,1e6)
+				else:
+					pi.hardware_PWM(signx,800,0)
+				pi.hardware_PWM(signy,800,1e6*min([abs(dy*distCalib),1])) # make it 1 if it's over 1
+				if dy<0: # if it's negative, send this pin
+					pi.hardware_PWM(signy,800,1e6)
+				else:
+					pi.hardware_PWM(signy,800,0)
 				gpio_lock.release()			
 				# Delay for transmission period (10 msec)
 				time.sleep(transmit_delay)		

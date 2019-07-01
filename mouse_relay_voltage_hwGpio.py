@@ -10,16 +10,16 @@ pi = pigpio.pi()
 
 try:
 	# distance calibration factor: 
-	# 1 ball rotation is about 1000 mouse units
-	# for now let's say that's 1/2 m
+	# it's 100 pixels per inch, so the number of pixels per meter is
+	# (numPix)(1 in / 100pixels)(2.54cm / 1in)(1m / 100cm)
 	# sampling rate is 100Hz (every 10ms)
 	# let's make 100% = 1.5 m/s
-	# so convert to m/s and then percentage of 1.25 m/s
+	# so convert to m/s and then percentage of 1.5 m/s
 
 	# can't send negative voltages, so let's have a pin 
 	# sends 1 if it's negative, 0 otherwise
 
-	pix_m = 2000
+	pix_m = 3937 # num pixels per meter
 	maxv = 1.5
 	
 
@@ -63,10 +63,11 @@ try:
 				data_lock.release()								
 				# convert to a percentage and write out to pins as % duty cycle
 				pinx = self.sensor['pinx']
-				signx = self.sensor['signx']
+				signx = self.sensor['xsign']
 				piny = self.sensor['piny']
-				signy = self.sensor['signy']							
+				signy = self.sensor['ysign']							
 				gpio_lock.acquire()		
+				print(min([abs(dx)*distCalib,1]))
 				pi.hardware_PWM(pinx,800,1e6*min([abs(dx)*distCalib,1])) # make it 1 if it's over 1
 				if dx<0: # if it's negative, send this pin
 					pi.hardware_PWM(pinx,800,1e6)

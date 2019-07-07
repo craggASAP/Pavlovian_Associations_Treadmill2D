@@ -1,10 +1,24 @@
 #!/usr/bin/python
 
 # adapted from mouse_relay_voltage.py on https://github.com/HanLabBU/movement_recording/blob/master/mouse_relay_voltage.py
-# note: run this using python 3
 import time
 from threading import Thread, Lock
 import Adafruit_MCP4725 # using the deprecated Adafruit Python MCP4725 library
+
+
+# Declare variables
+transmit_timer = None
+data_lock = Lock()
+ppm = 15000 # num pixels per meter - ish
+maxv = 1.5 # max velocity (m/s)
+transmit_delay = .01 #.01
+read_delay = .001 #0.001
+distCalib = 1./float(ppm)/transmit_delay/float(maxv)/2.
+
+# initialize I2C buses (X: SDA 2 SC: 3; Y: SDA 17 SCL 27)
+dacX = Adafruit_MCP4725.MCP4725(address=0x60,busnum=1)
+dacY = Adafruit_MCP4725.MCP4725(address=0x60,busnum=3)
+	
 
 try:
 	# distance calibration factor: what percent of maximum velocity?
@@ -14,22 +28,9 @@ try:
 	# Dictionaries/structures containing data for each 'SENSOR'
 	mouse1 = {
 		'Name': '1',
-		'File': open('/dev/input/mouse0'),
+		'File': file('/dev/input/mouse1'),
 		'dx': 0,
 		'dy': 0}
-	
-	# initialize I2C buses (X: SDA 2 SC: 3; Y: SDA 17 SCL 27)
-	dacX = Adafruit_MCP4725.MCP4725(address=0x60,busnum=1)
-	dacY = Adafruit_MCP4725.MCP4725(address=0x60,busnum=3)
-		
-	# Declare variables
-	transmit_timer = None
-	data_lock = Lock()
-	ppm = 3937 # num pixels per meter
-	maxv = 1.5 # max velocity (m/s)
-	transmit_delay = .01 #.01
-	read_delay = .001 #0.001
-	distCalib = 1/ppm/transmit_delay/maxv/2
 
 	print('mouse_relay.py: \n\tMain thread initialized\n\tDefining I/O threads\n')
 
@@ -45,9 +46,9 @@ try:
 			while True:
 				# acquire and reset dx/dy data
 				data_lock.acquire()
-				dx = self.sensor['dx']				
+				dx = float(self.sensor['dx'])
 				self.sensor['dx'] = 0
-				dy = self.sensor['dy']
+				dy = float(self.sensor['dy'])
 				self.sensor['dy'] = 0
 				data_lock.release()								
 				# convert to a a voltage output (12byte so 2^12=4096) 
@@ -55,6 +56,7 @@ try:
 				dyout = int(4096*(.5+dy*distCalib))
 				dacX.set_voltage(dxout)
 				dacY.set_voltage(dyout)
+				#print(.5+dx*distCalib)
 				
 				# Delay for transmission period (10 msec)
 				time.sleep(transmit_delay)		

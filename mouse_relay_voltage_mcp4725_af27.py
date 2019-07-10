@@ -9,7 +9,7 @@ import Adafruit_MCP4725 # using the deprecated Adafruit Python MCP4725 library
 # Declare variables
 transmit_timer = None
 data_lock = Lock()
-ppm = 15000 # num pixels per meter - ish
+ppm = 55000 # num pixels per meter - ish
 maxv = 1.5 # max velocity (m/s)
 transmit_delay = .01 #.01
 read_delay = .001 #0.001
@@ -28,7 +28,7 @@ try:
 	# Dictionaries/structures containing data for each 'SENSOR'
 	mouse1 = {
 		'Name': '1',
-		'File': file('/dev/input/mouse1'),
+		'File': file('/dev/input/mouse0'),
 		'dx': 0,
 		'dy': 0}
 
@@ -56,7 +56,6 @@ try:
 				dyout = int(4096*(.5+dy*distCalib))
 				dacX.set_voltage(dxout)
 				dacY.set_voltage(dyout)
-				#print(.5+dx*distCalib)
 				
 				# Delay for transmission period (10 msec)
 				time.sleep(transmit_delay)		

@@ -9,11 +9,12 @@ import Adafruit_MCP4725 # using the deprecated Adafruit Python MCP4725 library
 # Declare variables
 transmit_timer = None
 data_lock = Lock()
-ppm = 55000 # num pixels per meter - ish
-maxv = 1.5 # max velocity (m/s)
+ppm = 400.*25./63.5*100. # num pixels per meter - ish
+maxv = 3.5 # max velocity (m/s)
 transmit_delay = .01 #.01
 read_delay = .001 #0.001
 distCalib = 1./float(ppm)/transmit_delay/float(maxv)/2.
+#distCalib = 1./float(ppm)/transmit_delay/float(maxv)
 
 # initialize I2C buses (X: SDA 2 SC: 3; Y: SDA 17 SCL 27)
 dacX = Adafruit_MCP4725.MCP4725(address=0x60,busnum=1)
@@ -54,6 +55,8 @@ try:
 				# convert to a a voltage output (12byte so 2^12=4096) 
 				dxout = int(4096*(.5+dx*distCalib))
 				dyout = int(4096*(.5+dy*distCalib))
+				#dxout = int(4096*abs(dx)*distCalib)
+				#dyout = int(4096*abs(dy)*distCalib)
 				dacX.set_voltage(dxout)
 				dacY.set_voltage(dyout)
 				

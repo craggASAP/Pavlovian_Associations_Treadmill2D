@@ -21,7 +21,7 @@ dacX = Adafruit_MCP4725.MCP4725(address=0x60,busnum=1)
 dacY = Adafruit_MCP4725.MCP4725(address=0x60,busnum=3)
 	
 # initialize the sign pins
-signpins = [23 24]
+signpins = [23, 24]
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(signpins,GPIO.OUT,initial=GPIO.LOW)
 
@@ -34,7 +34,7 @@ try:
 	# Dictionaries/structures containing data for each 'SENSOR'
 	mouse1 = {
 		'Name': '1',
-		'File': file('/dev/input/mouse0'),
+		'File': file('/dev/input/mouse1'),
 		'dx': 0,
 		'dy': 0}
 
@@ -63,7 +63,7 @@ try:
 				dacX.set_voltage(dxout)
 				dacY.set_voltage(dyout)
 				# sign out (0 if neg, 1 if pos)
-				GPIO.output([23 24],(dx>=0 dy>=0))
+				GPIO.output([23, 24],(dx>=0, dy>=0))
 				
 				# Delay for transmission period (10 msec)
 				time.sleep(transmit_delay)		

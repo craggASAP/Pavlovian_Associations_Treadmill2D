@@ -63,7 +63,8 @@ try:
 				dacX.set_voltage(dxout)
 				dacY.set_voltage(dyout)
 				# sign out (0 if neg, 1 if pos)
-				GPIO.output([23, 24],(dx>=0, dy>=0))
+				GPIO.output([23, 24],(dx>=0, dy>=0)) # default
+				#GPIO.output([23, 24],(dx>=0, dy<=0)) # use this for sensor 2 if on right
 				
 				# Delay for transmission period (10 msec)
 				time.sleep(transmit_delay)		

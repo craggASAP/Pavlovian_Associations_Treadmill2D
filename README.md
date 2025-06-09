@@ -12,7 +12,7 @@
 ------------------
 ## Project Overview
 
-This repository contains scripts for reading velocity from 2D treadmill ball using Raspberry Pi. The scripts read the x- and y-velocity from the optical mouse, transmits it as a voltage via the raspberry pi output pins to be converted through the DAC MCP4725 and then read into Matlab via the NiDaq card. These scripts were adapted from [Han Lab](https://github.com/HanLabBU/movement_recording/mouse_relay_voltage.py) and used in the study [Distinct spatially organized striatum-wide acetylcholine dynamics for the learning and extinction of Pavlovian associations.](https://pubmed.ncbi.nlm.nih.gov/39071401/).
+This repository contains scripts for reading velocity from 2D treadmill ball using Raspberry Pi. The scripts read the x- and y-velocity from the optical mouse, transmits it as a voltage via the raspberry pi output pins to be converted through the DAC MCP4725 and then read into Matlab via the NiDaq card. These scripts were adapted from [Han Lab](https://github.com/HanLabBU/movement_recording/mouse_relay_voltage.py) and used in the study [Distinct spatially organized striatum-wide acetylcholine dynamics for the learning and extinction of Pavlovian associations.](https://www.nature.com/articles/s41467-025-60462-5).
 
 ------------------
 ## Folder Structure

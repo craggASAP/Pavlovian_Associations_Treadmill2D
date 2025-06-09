@@ -43,7 +43,7 @@ Any operating system able of running Phyton 2.7.
 
 **Hardware requirement** : Run these scripts on the Raspberry Pi.
 
-**Software requirement**:  Phyton can be installed on machines running Windows. Install [Adafruit Python MCP4725 Library](https://github.com/adafruit/Adafruit_Python_MCP4725). 
+**Software requirement**:  Phyton can be installed on machines running Windows, macOS or Linux. Install [Adafruit Python MCP4725 Library](https://github.com/adafruit/Adafruit_Python_MCP4725). 
 
 ------------------
 ##  License and Citation
